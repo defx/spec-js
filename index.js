@@ -1,9 +1,11 @@
-const COMPONENT = "component";
-const CURRENT_STATE = "current state";
-const NEXT_STATE = "next state";
-const EVENT = "event";
-const EVENT_TARGET = "event target";
-const EVENT_SOURCE = "event source";
+const SCENARIO = "Scenario";
+const INITIAL_VALUE = "InitialValue";
+const COMPONENT = "Component";
+const CURRENT_STATE = "CurrentState";
+const NEXT_STATE = "NextState";
+const EVENT = "Event";
+const EVENT_TARGET = "EventTarget";
+const EVENT_SOURCE = "EventSource";
 
 const typeMap = {
   given: {
@@ -31,6 +33,14 @@ const last = arr => arr[arr.length - 1];
 const firstWord = str => first(str.split(" "));
 
 let previous;
+
+const stripBrackets = str => {
+  const match = str.match(/\[(.+?)\]/);
+  return match && match[1];
+};
+
+const capitalised = ([first, ...rest]) =>
+  `${first.toUpperCase()}${rest.map(c => c.toLowerCase()).join("")}`;
 
 const parseLine = str => {
   const realName = firstWord(str);
@@ -62,15 +72,17 @@ const parseLine = str => {
   if (["given", "then"].includes(realName)) previous = realName;
 
   return {
-    name: realName,
-    values: values(stageName, tags.map(tag => tag.substr(1, tag.length - 2)))
+    name: capitalised(realName),
+    value: values(stageName, tags.map(stripBrackets))
   };
 };
 
 const pattern = /^((given( and)* )(when )?|(when ))then{1}( and)*/;
 
-const parseScenario = str => {
-  const lines = str.split(/\n/);
+const splitLines = str => str.split(/\n/);
+
+const parseScenarioDefinition = str => {
+  const lines = splitLines(str);
   const firstWords = lines.map(firstWord).join(" ");
 
   if (!firstWords.match(pattern)) {
@@ -83,7 +95,33 @@ const parseScenario = str => {
     return;
   }
 
-  return lines.map(parseLine);
+  return {
+    type: SCENARIO,
+    value: lines.map(parseLine)
+  };
+};
+
+const parseInitialValueDefinition = str => {
+  const [left, right] = str.split(" is ");
+  return {
+    type: INITIAL_VALUE,
+    value: [
+      {
+        type: COMPONENT,
+        value: stripBrackets(left)
+      },
+      {
+        type: CURRENT_STATE,
+        value: stripBrackets(right)
+      }
+    ]
+  };
+};
+
+const dispatch = str => {
+  if (str.match(/given | when/)) return parseScenarioDefinition(str);
+  if (!str.match(/\n/) && str.match(/ is /))
+    return parseInitialValueDefinition(str);
 };
 
 const parse = str =>
@@ -91,7 +129,9 @@ const parse = str =>
     .trim()
     .toLowerCase()
     .split(/\n{2,}/)
-    .map(parseScenario)
-    .filter(v => v && !v.find(v => v === undefined));
+    .map(dispatch)
+    .filter(
+      v => v && (v.type !== SCENARIO || !v.value.find(v => v === undefined))
+    );
 
 module.exports = parse;

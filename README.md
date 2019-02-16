@@ -12,75 +12,140 @@ A JavaScript function for parsing [.spec](https://github.com/defx/spec) files.
 const parse = require("spec-js-parser");
 
 parse(`
-Given that [playback] is [paused]
-Then the [pause button] is [hidden]
-And the [play button] is [visible]
-`);
-/*
-=>
-[
-  [
-    {
-      "name": "given",
-      "values": [
-        { "type": "component", "value": "playback" },
-        { "type": "current state", "value": "paused" }
-      ]
-    },
-    {
-      "name": "then",
-      "values": [
-        { "type": "component", "value": "pause button" },
-        { "type": "next state", "value": "hidden" }
-      ]
-    },
-    {
-      "name": "and",
-      "values": [
-        { "type": "component", "value": "play button" },
-        { "type": "next state", "value": "visible" }
-      ]
-    }
-  ]
-]
-*/
-```
+[playback] is [paused]
 
-```js
-const parse = require("spec-js-parser");
+given that [playback] is [paused]
+then the [pause button] is [hidden]
+and the [play button] is [visible]
 
-parse(`
+given that [playback] is [resumed]
+then the [play button] is [hidden]
+and the [pause button] is [visible]
+
 given that [playback] is [paused]
 when the [user] [taps] the [play button]
 then [playback] is [resumed]
+
+given that [playback] is [resumed]
+when the [user] [taps] the [pause button]
+then [playback] is [paused]
 `);
 /*
 =>
 [
-  [
-    {
-      "name": "given",
-      "values": [
-        { "type": "component", "value": "playback" },
-        { "type": "current state", "value": "paused" }
-      ]
-    },
-    {
-      "name": "when",
-      "values": [
-        { "type": "event source", "value": "user" },
-        { "type": "event", "value": "taps" },
-        { "type": "event target", "value": "play button" }
-      ]
-    },
-    {
-      "name": "then",
-      "values": [
-        { "type": "component", "value": "playback" },
-        { "type": "next state", "value": "resumed" }
-      ]
-    }
-  ]
+  {
+    "type": "InitialValue",
+    "value": [
+      { "type": "Component", "value": "playback" },
+      { "type": "CurrentState", "value": "paused" }
+    ]
+  },
+  {
+    "type": "Scenario",
+    "value": [
+      {
+        "name": "Given",
+        "value": [
+          { "type": "Component", "value": "playback" },
+          { "type": "CurrentState", "value": "paused" }
+        ]
+      },
+      {
+        "name": "Then",
+        "value": [
+          { "type": "Component", "value": "pause button" },
+          { "type": "NextState", "value": "hidden" }
+        ]
+      },
+      {
+        "name": "And",
+        "value": [
+          { "type": "Component", "value": "play button" },
+          { "type": "NextState", "value": "visible" }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Scenario",
+    "value": [
+      {
+        "name": "Given",
+        "value": [
+          { "type": "Component", "value": "playback" },
+          { "type": "CurrentState", "value": "resumed" }
+        ]
+      },
+      {
+        "name": "Then",
+        "value": [
+          { "type": "Component", "value": "play button" },
+          { "type": "NextState", "value": "hidden" }
+        ]
+      },
+      {
+        "name": "And",
+        "value": [
+          { "type": "Component", "value": "pause button" },
+          { "type": "NextState", "value": "visible" }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Scenario",
+    "value": [
+      {
+        "name": "Given",
+        "value": [
+          { "type": "Component", "value": "playback" },
+          { "type": "CurrentState", "value": "paused" }
+        ]
+      },
+      {
+        "name": "When",
+        "value": [
+          { "type": "EventSource", "value": "user" },
+          { "type": "Event", "value": "taps" },
+          { "type": "EventTarget", "value": "play button" }
+        ]
+      },
+      {
+        "name": "Then",
+        "value": [
+          { "type": "Component", "value": "playback" },
+          { "type": "NextState", "value": "resumed" }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Scenario",
+    "value": [
+      {
+        "name": "Given",
+        "value": [
+          { "type": "Component", "value": "playback" },
+          { "type": "CurrentState", "value": "resumed" }
+        ]
+      },
+      {
+        "name": "When",
+        "value": [
+          { "type": "EventSource", "value": "user" },
+          { "type": "Event", "value": "taps" },
+          { "type": "EventTarget", "value": "pause button" }
+        ]
+      },
+      {
+        "name": "Then",
+        "value": [
+          { "type": "Component", "value": "playback" },
+          { "type": "NextState", "value": "paused" }
+        ]
+      }
+    ]
+  }
 ]
 */
 ```
