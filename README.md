@@ -12,9 +12,9 @@ A function for parsing [.spec](https://github.com/defx/spec) files using JavaScr
 const parse = require("spec-js-parser");
 
 parse(`
-Given that playback is paused
-Then the pause button is hidden
-And the play button is visible
+Given that [playback] is [paused]
+Then the [pause button] is [hidden]
+And the [play button] is [visible]
 `);
 /*
 =>
