@@ -95,9 +95,13 @@ const parseScenarioDefinition = str => {
     return;
   }
 
+  const value = lines.map(parseLine);
+
+  if (value.find(v => !v)) return null;
+
   return {
     type: SCENARIO,
-    value: lines.map(parseLine)
+    value
   };
 };
 
@@ -132,8 +136,6 @@ const parse = str =>
     .split(/\n{2,}/)
     .map(dispatch)
     .reduce((a, v) => a.concat(v))
-    .filter(
-      v => v && (v.type !== SCENARIO || !v.value.find(v => v === undefined))
-    );
+    .filter(v => v);
 
 module.exports = parse;
