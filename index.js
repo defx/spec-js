@@ -101,27 +101,28 @@ const parseScenarioDefinition = str => {
   };
 };
 
-const parseInitialValueDefinition = str => {
-  const [left, right] = str.split(" is ");
-  return {
-    type: INITIAL_VALUE,
-    value: [
-      {
-        type: COMPONENT,
-        value: stripBrackets(left)
-      },
-      {
-        type: CURRENT_STATE,
-        value: stripBrackets(right)
-      }
-    ]
-  };
-};
+const parseInitialValueDefinition = str =>
+  splitLines(str).map(str => {
+    const [left, right] = str.split(" is ");
+    return {
+      type: INITIAL_VALUE,
+      value: [
+        {
+          type: COMPONENT,
+          value: stripBrackets(left)
+        },
+        {
+          type: CURRENT_STATE,
+          value: stripBrackets(right)
+        }
+      ]
+    };
+  });
 
-const dispatch = str => {
-  if (str.match(/given | when/)) return parseScenarioDefinition(str);
-  if (!str.match(/\n/) && str.match(/ is /))
+const dispatch = (str, i) => {
+  if (i === 0 && !str.match(/given |when /))
     return parseInitialValueDefinition(str);
+  return parseScenarioDefinition(str);
 };
 
 const parse = str =>
@@ -130,6 +131,7 @@ const parse = str =>
     .toLowerCase()
     .split(/\n{2,}/)
     .map(dispatch)
+    .reduce((a, v) => a.concat(v))
     .filter(
       v => v && (v.type !== SCENARIO || !v.value.find(v => v === undefined))
     );
