@@ -32,8 +32,6 @@ const first = arr => arr[0];
 const last = arr => arr[arr.length - 1];
 const firstWord = str => first(str.split(" "));
 
-let previous;
-
 const stripBrackets = str => {
   const match = str.match(/\[(.+?)\]/);
   return match && match[1];
@@ -41,6 +39,8 @@ const stripBrackets = str => {
 
 const capitalised = ([first, ...rest]) =>
   `${first.toUpperCase()}${rest.map(c => c.toLowerCase()).join("")}`;
+
+let previous;
 
 const parseLine = str => {
   const realName = firstWord(str);
@@ -108,6 +108,9 @@ const parseScenarioDefinition = str => {
 const parseInitialValueDefinition = str =>
   splitLines(str).map(str => {
     const [left, right] = str.split(" is ");
+
+    if (!left || !right) return;
+
     return {
       type: INITIAL_VALUE,
       value: [
