@@ -1,3 +1,5 @@
+const parseConditions = require("./parseConditions");
+
 const SCENARIO = "Scenario";
 const INITIAL_VALUE = "InitialValue";
 const COMPONENT = "Component";
@@ -132,13 +134,30 @@ const dispatch = (str, i) => {
   return parseScenarioDefinition(str);
 };
 
-const parse = str =>
-  str
+const parse = str => {
+  const tree = str
     .trim()
     .toLowerCase()
     .split(/\n{2,}/)
     .map(dispatch)
     .reduce((a, v) => a.concat(v))
     .filter(v => v);
+
+  const byType = type => tree.filter(entry => entry.type === type);
+  const findInTree = type => byType(type).map(({ value }) => value);
+
+  const initialValues = findInTree("InitialValue");
+  const scenarios = findInTree("Scenario");
+  const conditions = parseConditions(scenarios);
+
+  //@TODO: validate conditions...
+
+  return {
+    conditions,
+    initialValues,
+    scenarios,
+    tree
+  };
+};
 
 module.exports = parse;
