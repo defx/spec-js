@@ -45,8 +45,16 @@ const build = (initialValues, conditions) => {
   );
 
   const compute = (state = initialState, eventName) => {
+    if (!eventName) return state;
+
     const fn = eventMap[eventName];
-    return fn ? fn(state) : state;
+
+    if (!fn) {
+      console.warn(`Unknown event name: ${eventName}`);
+      return state;
+    }
+
+    return fn(state);
   };
 
   return {
