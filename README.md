@@ -2,10 +2,6 @@
 
 A JavaScript function for parsing a string conforming to the [spec](https://github.com/defx/spec) format.
 
-## Install
-
-`$ npm install spec-js-parser`
-
 ## Usage
 
 ```js
