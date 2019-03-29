@@ -33,6 +33,8 @@ const build = (initialValues, conditions) => {
 
   const eventConditions = conditions.filter(([, , eventName]) => eventName);
 
+  const eventNames = eventConditions.map(([, , eventName]) => eventName);
+
   const eventMap = eventConditions.reduce(
     (a, [preconditions, postconditions, eventName]) => {
       return {
@@ -44,13 +46,18 @@ const build = (initialValues, conditions) => {
     {}
   );
 
-  return (state = initialState, eventName) => {
+  const compute = (state = initialState, eventName) => {
     const fn = eventMap[eventName];
     return fn ? fn(state) : state;
+  };
+
+  return {
+    eventNames,
+    compute
   };
 };
 
 module.exports = str => {
-  const { intialValues, conditions } = parse(str);
-  return build(intialValues, conditions);
+  const { initialValues, conditions } = parse(str);
+  return build(initialValues, conditions);
 };

@@ -1,4 +1,4 @@
-import parseConditions from "./parseConditions";
+const parseConditions = require("./parseConditions");
 
 const SCENARIO = "Scenario";
 const INITIAL_VALUE = "InitialValue";

@@ -37,4 +37,4 @@ const parseConditions = scenarios =>
     })
     .filter(v => v);
 
-export default parseConditions;
+module.exports = parseConditions;
