@@ -1,6 +1,6 @@
 # spec-js-parser
 
-A JavaScript function for parsing [.spec](https://github.com/defx/spec) files.
+A JavaScript function for parsing a string conforming to the [spec](https://github.com/defx/spec) format.
 
 ## Install
 
