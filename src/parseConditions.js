@@ -10,6 +10,8 @@ const slicePoints = scenario => {
   if (then > -1) return [then, then];
 };
 
+const eventName = event => event.value.map(value).join(" ");
+
 const parseConditions = scenarios =>
   scenarios
     .map(scenario => {
@@ -29,11 +31,9 @@ const parseConditions = scenarios =>
         .map(value)
         .map(v => v.map(value));
 
-      return [
-        preconditions,
-        postconditions,
-        scenario.find(({ name }) => name === "When")
-      ];
+      const event = scenario.find(({ name }) => name === "When");
+
+      return [preconditions, postconditions, event && eventName(event)];
     })
     .filter(v => v);
 

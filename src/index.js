@@ -12,8 +12,6 @@ const apply = (state, preconditions, postconditions) => {
   );
 };
 
-const value = ({ value }) => value;
-
 const build = (initialValues, conditions) => {
   const derivativeConditions = conditions.filter(([, , e]) => !e);
 
@@ -33,11 +31,10 @@ const build = (initialValues, conditions) => {
     )
   );
 
-  const eventConditions = conditions.filter(([, , e]) => e);
+  const eventConditions = conditions.filter(([, , eventName]) => eventName);
 
   const eventMap = eventConditions.reduce(
-    (a, [preconditions, postconditions, event]) => {
-      const eventName = event.value.map(value).join(" ");
+    (a, [preconditions, postconditions, eventName]) => {
       return {
         ...a,
         [eventName]: state =>
