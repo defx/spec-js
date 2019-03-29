@@ -1,6 +1,6 @@
 # spec-js
 
-A JavaScript function for parsing a string conforming to the [spec](https://github.com/defx/spec) format.
+A JavaScript function for parsing a [spec](https://github.com/defx/spec) formatted string.
 
 ## Usage
 
