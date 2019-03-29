@@ -1,4 +1,4 @@
-# spec-js-parser
+# spec-js
 
 A JavaScript function for parsing a string conforming to the [spec](https://github.com/defx/spec) format.
 
