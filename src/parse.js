@@ -1,4 +1,5 @@
 const parseConditions = require("./parseConditions");
+const validateConditions = require("./validate");
 
 const SCENARIO = "Scenario";
 const INITIAL_VALUE = "InitialValue";
@@ -150,7 +151,7 @@ const parse = str => {
   const scenarios = findInTree("Scenario");
   const conditions = parseConditions(scenarios);
 
-  //@TODO: validate conditions...
+  validateConditions(conditions);
 
   return {
     conditions,
