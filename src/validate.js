@@ -20,36 +20,33 @@ const potentialRaceCondition = (a, b) => {
   );
 
   if (raceCondition) {
-    /* @TODO:
-    log message outside later when we have access to the original scenario :)
+    /*
+    @TODO: print the two scenarios, highlighting the relevant post-condition
     */
-    const [key] = raceCondition;
+
+    const [, , , scenarioA] = a;
+    const [, , , scenarioB] = b;
+
     console.warn(`
-      Potential race condition for "${key}":
+
     `);
+
+    return true;
   }
 
-  if (!raceCondition) return false;
-
-  return true;
+  return false;
 };
 
-const validate = (conditions, res = []) => {
-  if (!conditions.length) return res;
+/* exits after the first validation error */
+const validate = conditions => {
+  const error = conditions.find((condition, i, all) => {
+    if (i === all.length - 1) return;
 
-  const [first, ...rest] = conditions;
+    const rest = all.slice(i + 1);
 
-  const validated = rest.map(v => ({
-    ...v,
-    valid: !potentialRaceCondition(first, v)
-  }));
-
-  const invalid = validated.filter(({ valid }) => !valid);
-
-  if (!invalid.length) return validate(rest, res);
-
-  const remaining = validated.filter(({ valid }) => valid);
-  return validate(remaining, res.concat([first, ...invalid]));
+    return rest.find(next => potentialRaceCondition(condition, next));
+  });
+  return !error;
 };
 
 module.exports = conditions => {

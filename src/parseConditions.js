@@ -33,7 +33,12 @@ const parseConditions = scenarios =>
 
       const event = scenario.find(({ name }) => name === "When");
 
-      return [preconditions, postconditions, event && eventName(event)];
+      return [
+        preconditions,
+        postconditions,
+        event && eventName(event),
+        scenario
+      ];
     })
     .filter(v => v);
 
