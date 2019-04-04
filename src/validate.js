@@ -1,9 +1,8 @@
 /*
 there can be a race condition if both of the following hold true:
 
-  1) the two sets of preconditions do not share any common keys, other than those with common values
-
-  2) the two sets of postconditions share at least one common key with more than one different value 
+  1) the two sets of preconditions do not share any common keys with different values
+  2) the two sets of postconditions share at least one common key with a different value 
 */
 
 const chalk = require("chalk");
@@ -21,7 +20,7 @@ const potentialRaceCondition = (a, b) => {
       b.preconditions.find(([k2, v2]) => k1 === k2 && v1 !== v2)
     )
   )
-    return false; //can't occur at the same time
+    return false;
 
   const match = a.postconditions.find(([k1, v1]) =>
     b.postconditions.find(([k2, v2]) => k1 === k2 && v1 !== v2)
