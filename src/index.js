@@ -1,69 +1,21 @@
+const chain = require("./chain");
 const parse = require("./parse");
+const parseConditions = require("./parseConditions");
+const validate = require("./validate");
+const build = require("./build");
 
-const apply = (state, preconditions, postconditions) => {
-  if (!preconditions.every(([k, v]) => state[k] === v)) return state;
-
-  return postconditions.reduce(
-    (a, [k, v]) => ({
-      ...a,
-      [k]: v
-    }),
-    state
-  );
-};
-
-const build = (initialValues, conditions) => {
-  const derivativeConditions = conditions.filter(([, , e]) => !e);
-  const eventConditions = conditions.filter(([, , eventName]) => eventName);
-  const eventNames = eventConditions.map(([, , eventName]) => eventName);
-
-  const computeDerivatives = state =>
-    derivativeConditions.reduce(
-      (state, conditions) => apply(state, ...conditions),
-      state
-    );
-
-  const initialState = computeDerivatives(
-    initialValues.reduce(
-      (a, [{ value: k }, { value: v }]) => ({
-        ...a,
-        [k]: v
-      }),
-      {}
+module.exports = str =>
+  chain(str)
+    .then(str =>
+      str
+        .trim()
+        .toLowerCase()
+        .split(/\n{2,}/)
     )
-  );
-
-  const eventMap = eventConditions.reduce(
-    (a, [preconditions, postconditions, eventName]) => {
-      return {
-        ...a,
-        [eventName]: state =>
-          computeDerivatives(apply(state, preconditions, postconditions))
-      };
-    },
-    {}
-  );
-
-  const compute = (state = initialState, eventName) => {
-    if (!eventName) return state;
-
-    const fn = eventMap[eventName];
-
-    if (!fn) {
-      console.warn(`Unknown event name: ${eventName}`);
-      return state;
-    }
-
-    return fn(state);
-  };
-
-  return {
-    eventNames,
-    compute
-  };
-};
-
-module.exports = str => {
-  const { initialValues, conditions } = parse(str);
-  return build(initialValues, conditions);
-};
+    .map(str => ({
+      node: parse(str),
+      value: str
+    }))
+    .map(parseConditions)
+    .then(validate)
+    .then(build);
