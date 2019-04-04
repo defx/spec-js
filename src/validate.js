@@ -8,28 +8,42 @@ there can be a race condition if both of the following hold true:
 
 */
 
-const potentialRaceCondition = (a, b) => {
-  const [preA, postA] = a;
-  const [preB, postB] = b;
+const chalk = require("chalk");
 
-  if (preA.find(([kA, vA]) => preB.find(([kB, vB]) => kA === kB && vA !== vB)))
+const highlight = (scenario, [k, v]) => {
+  const [start, end] = scenario.split(k);
+  const [s2, e2] = end.split(v);
+  return `${start}${chalk.bold.yellow(k)}${s2}${chalk.bold.yellow(v)}${e2}`;
+};
+
+const potentialRaceCondition = (a, b) => {
+  if (
+    a.preconditions.find(([kA, vA]) =>
+      b.preconditions.find(([kB, vB]) => kA === kB && vA !== vB)
+    )
+  )
     return false; //can't occur at the same time
 
-  const raceCondition = postA.find(([kA, vA]) =>
-    postB.find(([kB, vB]) => kA === kB && vA !== vB)
+  const match = a.postconditions.find(([kA, vA]) =>
+    b.postconditions.find(([kB, vB]) => kA === kB && vA !== vB)
   );
 
-  if (raceCondition) {
-    /*
-    @TODO: print the two scenarios, highlighting the relevant post-condition
-    */
+  if (match) {
+    const [k, v] = match;
 
-    const [, , , scenarioA] = a;
-    const [, , , scenarioB] = b;
+    const reverseMatch = b.postconditions.find(
+      ([kA, vA]) => kA === k && vA !== v
+    );
 
     console.warn(`
+${chalk.yellow("=============================================================")}
+Potential race condition between the following two scenarios:
 
-    `);
+${highlight(a.value, match)}
+
+${highlight(b.value, reverseMatch)}
+${chalk.yellow("=============================================================")}
+`);
 
     return true;
   }
@@ -37,19 +51,22 @@ const potentialRaceCondition = (a, b) => {
   return false;
 };
 
-/* exits after the first validation error */
-const validate = conditions => {
-  const error = conditions.find((condition, i, all) => {
-    if (i === all.length - 1) return;
-
-    const rest = all.slice(i + 1);
-
-    return rest.find(next => potentialRaceCondition(condition, next));
+/* currently exits after the first validation error */
+const validate = items => {
+  const scenarios = items.filter(({ node: { type } }) => type === "Scenario");
+  const error = scenarios.find((current, i, scenarios) => {
+    if (i === scenarios.length - 1) return;
+    const rest = scenarios.slice(i + 1);
+    return rest.find(next => potentialRaceCondition(current, next));
   });
   return !error;
 };
 
 module.exports = conditions => {
-  validate(conditions);
+  try {
+    validate(conditions);
+  } catch (e) {
+    console.error(`There was an error whilst trying to validate.`);
+  }
   return conditions;
 };
