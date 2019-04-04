@@ -1,14 +1,13 @@
 /*
-
 there can be a race condition if both of the following hold true:
 
   1) the two sets of preconditions do not share any common keys, other than those with common values
 
   2) the two sets of postconditions share at least one common key with more than one different value 
-
 */
 
 const chalk = require("chalk");
+const { stripIndents } = require("common-tags");
 
 const highlight = (scenario, [k, v]) => {
   const [start, end] = scenario.split(k);
@@ -35,15 +34,19 @@ const potentialRaceCondition = (a, b) => {
       ([kA, vA]) => kA === k && vA !== v
     );
 
-    console.warn(`
-${chalk.yellow("=============================================================")}
-Potential race condition between the following two scenarios:
+    console.warn(stripIndents`
+      ${chalk.yellow(
+        "============================================================="
+      )}
+      Potential race condition between the following two scenarios:
 
-${highlight(a.value, match)}
+      ${highlight(a.value, match)}
 
-${highlight(b.value, reverseMatch)}
-${chalk.yellow("=============================================================")}
-`);
+      ${highlight(b.value, reverseMatch)}
+      ${chalk.yellow(
+        "============================================================="
+      )}
+  `);
 
     return true;
   }
@@ -66,7 +69,7 @@ module.exports = conditions => {
   try {
     validate(conditions);
   } catch (e) {
-    console.error(`There was an error whilst trying to validate.`);
+    console.error(`There was an error whilst trying to validate.`, e);
   }
   return conditions;
 };
