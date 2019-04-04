@@ -16,11 +16,7 @@ const parseConditions = o => {
   if (o.node.type !== "Scenario") return o;
 
   const scenario = o.node.value;
-
   const points = slicePoints(scenario);
-
-  // if (!points) return;
-
   const [end, start] = points;
 
   const preconditions = scenario
