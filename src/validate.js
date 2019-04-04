@@ -17,21 +17,21 @@ const highlight = (scenario, [k, v]) => {
 
 const potentialRaceCondition = (a, b) => {
   if (
-    a.preconditions.find(([kA, vA]) =>
-      b.preconditions.find(([kB, vB]) => kA === kB && vA !== vB)
+    a.preconditions.find(([k1, v1]) =>
+      b.preconditions.find(([k2, v2]) => k1 === k2 && v1 !== v2)
     )
   )
     return false; //can't occur at the same time
 
-  const match = a.postconditions.find(([kA, vA]) =>
-    b.postconditions.find(([kB, vB]) => kA === kB && vA !== vB)
+  const match = a.postconditions.find(([k1, v1]) =>
+    b.postconditions.find(([k2, v2]) => k1 === k2 && v1 !== v2)
   );
 
   if (match) {
     const [k, v] = match;
 
     const reverseMatch = b.postconditions.find(
-      ([kA, vA]) => kA === k && vA !== v
+      ([k1, v1]) => k1 === k && v1 !== v
     );
 
     console.warn(stripIndents`
