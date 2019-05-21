@@ -18,11 +18,9 @@ const { compute, eventNames } = parse(`
   then the [play button] is [hidden]
   and the [pause button] is [visible]
 
-  given that [playback] is [paused]
   when the [user] [taps] the [play button]
   then [playback] is [resumed]
 
-  given that [playback] is [resumed]
   when the [user] [taps] the [pause button]
   then [playback] is [paused]
 `);
