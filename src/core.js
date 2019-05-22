@@ -9,7 +9,7 @@ const apply = (state, preconditions, postconditions) => {
   );
 };
 
-const reduce = ({ initial, computed, events }) => (
+const compute = ({ initial, computed, events }) => (
   state = initial,
   eventName
 ) => {
@@ -31,4 +31,4 @@ const reduce = ({ initial, computed, events }) => (
     );
 };
 
-module.exports = { compute, reduce };
+module.exports = { compute };
