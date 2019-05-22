@@ -9,11 +9,26 @@ const apply = (state, preconditions, postconditions) => {
   );
 };
 
-const compute = (state, computedProperties) =>
-  computedProperties.reduce(
-    (state, { preconditions, postconditions }) =>
-      apply(state, preconditions, postconditions),
-    state
-  );
+const reduce = ({ initial, computed, events }) => (
+  state = initial,
+  eventName
+) => {
+  if (!eventName) return state;
 
-module.exports = { compute };
+  const entry = events[eventName];
+
+  if (!entry) {
+    console.warn(`Unknown event name: ${eventName}`);
+    return state;
+  }
+
+  return [entry]
+    .concat(computed)
+    .reduce(
+      (state, { preconditions, postconditions }) =>
+        apply(state, preconditions, postconditions),
+      state
+    );
+};
+
+module.exports = { compute, reduce };
