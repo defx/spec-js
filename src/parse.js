@@ -125,7 +125,7 @@ const parseInitialValueDefinition = str => {
   };
 };
 
-const parse = (str, i) =>
+const parse = str =>
   str.match(/given |when /)
     ? parseScenarioDefinition(str)
     : parseInitialValueDefinition(str);
