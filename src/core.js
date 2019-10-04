@@ -9,6 +9,17 @@ const apply = (state, preconditions, postconditions) => {
   );
 };
 
+const applyAll = (state, items) =>
+  items.reduce(
+    (state, { preconditions, postconditions }) =>
+      apply(state, preconditions, postconditions),
+    state
+  );
+
+/**
+ * Returns a reducer function to update state based on a named event
+ * @param {Object}
+ */
 const compute = ({ initial, computed, events }) => (
   state = initial,
   eventName
@@ -22,13 +33,7 @@ const compute = ({ initial, computed, events }) => (
     return state;
   }
 
-  return [entry]
-    .concat(computed)
-    .reduce(
-      (state, { preconditions, postconditions }) =>
-        apply(state, preconditions, postconditions),
-      state
-    );
+  return applyAll([entry].concat(computed));
 };
 
-module.exports = { compute };
+module.exports = { applyAll, compute };

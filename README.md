@@ -1,13 +1,13 @@
 # spec-js
 
-A JavaScript function for parsing a [spec](https://github.com/defx/spec) formatted string.
+A JavaScript function for turning a [spec](https://github.com/defx/spec) formatted string into a state machine.
 
 ## Usage
 
-```js
-const parse = require("spec-js-parser");
+Compilation of your spec happens in two phases. First, your spec file is compiled into a serialisable set of state transitions that can be loaded by your application at runtime. Second, at runtime, you require only the core.js file to compile your transitions into a state machine.
 
-const { compute, eventNames } = parse(`
+```js
+const spec = `
   [playback] is [paused]
 
   given that [playback] is [paused]
@@ -23,30 +23,7 @@ const { compute, eventNames } = parse(`
 
   when the [user] [taps] the [pause button]
   then [playback] is [paused]
-`);
-
-eventNames;
-/*
-[ 'user taps play button', 'user taps pause button' ]
-*/
-
-const state = compute();
-/*
-  {
-    'playback': 'paused',
-    'pause button' : 'hidden',
-    'play button' : 'visible'
-  }
-*/
-
-compute(state, "user taps play button");
-/*
-  {
-    'playback': 'resumed',
-    'pause button' : 'visible',
-    'play button' : 'hidden'
-  }
-*/
+`;
 ```
 
 ## License

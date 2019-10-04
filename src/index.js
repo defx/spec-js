@@ -2,15 +2,21 @@ const parse = require("./parse");
 const parseConditions = require("./parseConditions");
 const build = require("./build");
 
-module.exports = str => {
-  const items = str
+/**
+ * Compiles a serializable representation of the state transitions described in the spec
+ * @param {string} spec Conforming to https://github.com/defx/spec
+ */
+const compile = spec => {
+  const items = spec
     .trim()
     .toLowerCase()
     .split(/\n{2,}/)
-    .map(str => ({
-      node: parse(str),
-      value: str
+    .map(scenario => ({
+      node: parse(scenario),
+      value: scenario
     }))
     .map(parseConditions);
   return build(items);
 };
+
+module.exports = compile;

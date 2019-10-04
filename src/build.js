@@ -1,4 +1,4 @@
-const { compute } = require("./core");
+const { applyAll } = require("./core");
 
 const build = items => {
   const eventDriven = items.filter(({ event }) => event);
@@ -14,14 +14,11 @@ const build = items => {
       postconditions
     }));
 
-  const initial = compute(
-    initialValues.reduce(
-      (a, [{ value: k }, { value: v }]) => ({
-        ...a,
-        [k]: v
-      }),
-      {}
-    ),
+  const initial = applyAll(
+    initialValues.reduce((a, [{ value: k }, { value: v }]) => {
+      a[k] = v;
+      return a;
+    }, {}),
     computed
   );
 
@@ -33,10 +30,11 @@ const build = items => {
 
       parts.postconditions = postconditions;
 
-      return {
-        ...a,
-        [event]: parts
-      };
+      a[event] = a[event] || [];
+
+      a[event].push(parts);
+
+      return a;
     },
     {}
   );

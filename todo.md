@@ -1,0 +1,3 @@
+- update README
+- GraphQL implementation
+- React hooks implementation
